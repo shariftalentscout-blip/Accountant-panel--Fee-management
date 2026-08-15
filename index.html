@@ -2,2482 +2,439 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ABC School | Student Fee Management</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABC School - Student Fee Management</title>
 
 <style>
 *{box-sizing:border-box}
 
 body{
-    margin:0;
-    font-family:Inter,Arial,sans-serif;
-    background:#071416;
-    color:#e8f3f3;
-}
-
-button,input,select,textarea{
-    font-family:inherit;
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#071719;
+ color:#eefafa;
 }
 
 .header{
-    background:
-    radial-gradient(circle at 10% 20%,rgba(0,255,200,.16),transparent 30%),
-    radial-gradient(circle at 90% 10%,rgba(0,180,255,.14),transparent 30%),
-    linear-gradient(135deg,#071416,#0b2528);
-    padding:24px 30px;
-    border-bottom:1px solid rgba(255,255,255,.08);
+ padding:22px 30px;
+ background:linear-gradient(135deg,#07191b,#123538);
+ border-bottom:1px solid #24565a;
 }
 
-.header-content{
-    max-width:1550px;
-    margin:auto;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
+.header-inner{
+ max-width:1500px;
+ margin:auto;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
 }
 
-.school-title{
-    display:flex;
-    align-items:center;
-    gap:15px;
+.brand{
+ display:flex;
+ align-items:center;
+ gap:15px;
 }
 
-.school-logo{
-    width:58px;
-    height:58px;
-    border-radius:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:linear-gradient(135deg,#11c7a4,#08766d);
-    font-size:24px;
-    font-weight:900;
-    box-shadow:0 0 25px rgba(17,199,164,.25);
+.logo{
+ width:60px;
+ height:60px;
+ border-radius:16px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:23px;
+ font-weight:900;
+ background:linear-gradient(135deg,#55e7cf,#159c8b);
+ box-shadow:0 0 28px rgba(40,230,200,.25);
 }
 
-.header h1{
-    margin:0;
-    font-size:27px;
-    letter-spacing:.5px;
-}
+h1{margin:0;font-size:27px}
+.brand p{margin:5px 0;color:#8ba8aa;font-size:11px}
 
-.header p{
-    margin:5px 0 0;
-    color:#9bb6b7;
-}
-
-.ai-badge{
-    padding:9px 15px;
-    border:1px solid rgba(35,220,180,.3);
-    background:rgba(15,197,165,.08);
-    color:#57e6c4;
-    border-radius:30px;
-    font-size:12px;
-    font-weight:bold;
+.ai{
+ padding:10px 16px;
+ border-radius:25px;
+ border:1px solid #1a8f80;
+ color:#55e8ce;
+ background:rgba(30,200,170,.08);
+ font-size:10px;
+ font-weight:bold;
 }
 
 .container{
-    max-width:1550px;
-    margin:auto;
-    padding:25px;
+ max-width:1500px;
+ margin:auto;
+ padding:24px;
 }
 
-.top-controls{
-    display:flex;
-    justify-content:space-between;
-    align-items:end;
-    gap:20px;
-    flex-wrap:wrap;
-    margin-bottom:22px;
+.top{
+ display:flex;
+ justify-content:space-between;
+ align-items:end;
+ margin-bottom:18px;
 }
 
-.control-box{
-    min-width:220px;
-}
+.control{width:230px}
 
 label{
-    display:block;
-    font-size:12px;
-    font-weight:700;
-    color:#9eb4b5;
-    margin-bottom:7px;
+ display:block;
+ color:#8da8aa;
+ font-size:10px;
+ font-weight:bold;
+ margin-bottom:6px;
 }
 
 input,select,textarea{
-    width:100%;
-    padding:12px 13px;
-    border-radius:9px;
-    border:1px solid #294144;
-    background:#102326;
-    color:#fff;
-    outline:none;
+ width:100%;
+ padding:11px;
+ border-radius:8px;
+ border:1px solid #315457;
+ background:#102628;
+ color:white;
+ outline:none;
 }
 
-input:focus,select:focus,textarea:focus{
-    border-color:#13c8a4;
-    box-shadow:0 0 0 3px rgba(19,200,164,.08);
+button{
+ border:0;
+ border-radius:9px;
+ padding:11px 15px;
+ cursor:pointer;
+ font-weight:bold;
+ font-size:10px;
+ transition:.2s;
 }
 
-.month-scroll{
-    display:flex;
-    gap:9px;
-    overflow-x:auto;
-    padding:3px 2px 18px;
+button:hover{
+ transform:translateY(-1px);
+ filter:brightness(1.12);
+}
+
+.add{
+ background:linear-gradient(135deg,#22d5b5,#078476);
+ color:white;
+ box-shadow:0 0 16px rgba(30,220,180,.18);
+}
+
+.receiptBtn{
+ background:linear-gradient(135deg,#12bfa8,#08776e);
+ color:white;
+}
+
+.paymentBtn{
+ background:linear-gradient(135deg,#e8c354,#a98626);
+ color:#14201f;
+}
+
+.whatsapp{
+ background:#187c68;
+ color:white;
+}
+
+.delete{
+ background:#8e3543;
+ color:white;
+}
+
+.monthlyBtn{
+ background:linear-gradient(135deg,#e9c75c,#b08a26);
+ color:#18201e;
+ padding:12px 18px;
+}
+
+.months{
+ display:flex;
+ gap:9px;
+ overflow-x:auto;
+ padding-bottom:18px;
 }
 
 .month{
-    min-width:105px;
-    padding:11px 17px;
-    text-align:center;
-    border-radius:30px;
-    border:1px solid #294144;
-    background:#102326;
-    color:#9eb4b5;
-    cursor:pointer;
-    white-space:nowrap;
-    transition:.2s;
-}
-
-.month:hover{
-    border-color:#13c8a4;
-    color:#fff;
+ min-width:95px;
+ text-align:center;
+ padding:11px 16px;
+ border-radius:25px;
+ background:linear-gradient(135deg,#1a3740,#244b58);
+ border:1px solid #315d68;
+ color:#a9c1c4;
+ cursor:pointer;
+ font-size:11px;
 }
 
 .month.active{
-    background:linear-gradient(135deg,#10c7a4,#08766d);
-    border-color:#10c7a4;
-    color:white;
-    box-shadow:0 8px 25px rgba(16,199,164,.16);
+ color:white;
+ background:linear-gradient(135deg,#14d5d1,#19b98d);
+ border-color:#35eee0;
+ box-shadow:0 0 22px rgba(25,220,190,.35);
 }
 
-/* DASHBOARD */
-
 .dashboard{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-    margin-bottom:15px;
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:14px;
 }
 
 .card{
-    position:relative;
-    overflow:hidden;
-    background:linear-gradient(145deg,#102528,#0c1d20);
-    border:1px solid #203a3d;
-    border-radius:15px;
-    padding:20px;
-    box-shadow:0 12px 35px rgba(0,0,0,.16);
+ padding:20px;
+ border-radius:15px;
+ background:linear-gradient(145deg,#12323d,#0c2227);
+ border:1px solid #244d55;
+ box-shadow:inset 0 0 30px rgba(30,170,200,.04);
 }
 
-.card:after{
-    content:"";
-    position:absolute;
-    width:100px;
-    height:100px;
-    right:-35px;
-    top:-35px;
-    background:rgba(25,210,174,.07);
-    border-radius:50%;
-}
+.card:nth-child(1){border-left:3px solid #39cfff}
+.card:nth-child(2){border-left:3px solid #22d5ad}
+.card:nth-child(3){border-left:3px solid #e2bd50}
+.card:nth-child(4){border-left:3px solid #ed6464}
 
 .card-title{
-    color:#8fa9aa;
-    font-size:12px;
-    font-weight:700;
-    letter-spacing:.6px;
+ color:#8da8aa;
+ font-size:10px;
+ font-weight:bold;
 }
 
-.card-number{
-    margin-top:10px;
-    font-size:30px;
-    font-weight:900;
+.number{
+ font-size:30px;
+ font-weight:900;
+ margin-top:9px;
 }
 
-.card-sub{
-    margin-top:7px;
-    color:#698486;
-    font-size:11px;
+.sub{
+ color:#668285;
+ font-size:9px;
+ margin-top:5px;
 }
 
-.green{border-left:3px solid #19d2ae}
-.yellow{border-left:3px solid #e7bd50}
-.red{border-left:3px solid #ef6464}
-.blue{border-left:3px solid #55aef5}
-
-/* MONEY CARDS */
-
-.money-grid{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:13px;
-    margin-bottom:22px;
+.money{
+ margin:15px 0 20px;
+ display:grid;
+ grid-template-columns:repeat(5,1fr);
+ gap:12px;
 }
 
-.money-card{
-    background:#0d2023;
-    border:1px solid #203b3e;
-    border-radius:13px;
-    padding:17px;
+.moneyBox{
+ padding:16px;
+ border-radius:12px;
+ background:#0d2226;
+ border:1px solid #24454b;
 }
 
-.money-card span{
-    display:block;
-    font-size:11px;
-    color:#7e999a;
-    margin-bottom:8px;
+.moneyBox span{
+ display:block;
+ color:#789396;
+ font-size:9px;
+ margin-bottom:7px;
 }
 
-.money-card strong{
-    font-size:20px;
-}
-
-/* SECTIONS */
+.moneyBox strong{font-size:19px}
 
 .section{
-    background:#0c1d20;
-    border:1px solid #203a3d;
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:20px;
-    box-shadow:0 12px 35px rgba(0,0,0,.13);
+ margin-bottom:20px;
+ padding:19px;
+ border-radius:15px;
+ background:#0b2023;
+ border:1px solid #234348;
 }
 
-.section-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    flex-wrap:wrap;
-    margin-bottom:17px;
+.sectionHead{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:15px;
+ margin-bottom:16px;
 }
 
-.section-header h2{
-    margin:0;
-    font-size:19px;
+.sectionHead h2{
+ margin:0 0 5px;
+ font-size:18px;
 }
 
-.section-header p{
-    margin:4px 0 0;
-    color:#789294;
-    font-size:12px;
+.sectionHead p{
+ margin:0;
+ color:#718c8e;
+ font-size:10px;
 }
 
-.btn{
-    border:0;
-    border-radius:9px;
-    padding:11px 16px;
-    cursor:pointer;
-    font-weight:800;
-    font-size:12px;
-    transition:.2s;
-}
-
-.btn:hover{
-    transform:translateY(-1px);
-}
-
-.btn-primary{
-    color:white;
-    background:linear-gradient(135deg,#13c9a5,#08796f);
-    box-shadow:0 7px 20px rgba(19,201,165,.13);
-}
-
-.btn-blue{
-    color:white;
-    background:#236ca3;
-}
-
-.btn-danger{
-    color:white;
-    background:#b83d4a;
-}
-
-.btn-dark{
-    color:white;
-    background:#25383b;
-}
-
-.btn-gold{
-    color:#101616;
-    background:#e5bc53;
-}
-
-/* TABLE */
-
-.table-wrapper{
-    overflow-x:auto;
-}
+.tableWrap{overflow-x:auto}
 
 table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1450px;
+ width:100%;
+ border-collapse:collapse;
+ min-width:1450px;
 }
 
 th{
-    text-align:left;
-    padding:13px 10px;
-    color:#89a5a6;
-    background:#102528;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:.4px;
+ padding:12px 8px;
+ background:#122c31;
+ color:#8fa9ab;
+ font-size:9px;
+ text-align:left;
 }
 
 td{
-    padding:12px 10px;
-    border-bottom:1px solid #1b3336;
-    font-size:12px;
-    white-space:nowrap;
+ padding:10px 8px;
+ border-bottom:1px solid #1d383c;
+ font-size:10px;
+ white-space:nowrap;
 }
 
-.student-photo{
-    width:45px;
-    height:45px;
-    object-fit:cover;
-    border-radius:12px;
-    border:1px solid #315054;
+.photo{
+ width:48px;
+ height:48px;
+ border-radius:9px;
+ object-fit:cover;
+ border:1px solid #42676b;
 }
 
 .status{
-    display:inline-block;
-    padding:5px 10px;
-    border-radius:20px;
-    font-size:10px;
-    font-weight:900;
+ padding:5px 9px;
+ border-radius:20px;
+ font-size:8px;
+ font-weight:bold;
 }
 
-.status-paid{
-    color:#51e2bd;
-    background:rgba(25,210,174,.1);
-}
-
-.status-due{
-    color:#e9c45b;
-    background:rgba(233,196,91,.1);
-}
-
-.status-overdue{
-    color:#ff7777;
-    background:rgba(255,80,80,.1);
-}
-
-/* MODAL */
+.paid{background:#123d36;color:#55e2bf}
+.due{background:#443a19;color:#e6c65b}
+.overdue{background:#491e25;color:#ff7777}
 
 .modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:9999;
-    background:rgba(0,0,0,.75);
-    overflow:auto;
-    backdrop-filter:blur(7px);
+ display:none;
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.82);
+ z-index:1000;
+ overflow:auto;
 }
 
-.modal-content{
-    width:94%;
-    max-width:950px;
-    margin:35px auto;
-    background:#0c1d20;
-    border:1px solid #294447;
-    border-radius:17px;
-    padding:24px;
+.modalBox{
+ width:94%;
+ max-width:1000px;
+ margin:30px auto;
+ background:#0c2023;
+ border:1px solid #31565a;
+ border-radius:16px;
+ padding:22px;
 }
 
-.modal-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
-
-.modal-header h2{
-    margin:0;
+.modalHead{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:18px;
 }
 
 .close{
-    font-size:28px;
-    cursor:pointer;
-    color:#8ca5a6;
+ cursor:pointer;
+ font-size:27px;
+ color:#8fa7a9;
 }
 
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
+.formGrid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:13px;
 }
 
-.full{
-    grid-column:1/-1;
-}
+.full{grid-column:1/-1}
 
-.photo-preview{
-    width:100px;
-    height:100px;
-    display:none;
-    margin-top:10px;
-    border-radius:15px;
-    object-fit:cover;
-    border:2px solid #13c9a5;
+.preview{
+ display:none;
+ width:100px;
+ height:100px;
+ object-fit:cover;
+ border-radius:10px;
+ margin-top:8px;
+ border:2px solid #1fd6ba;
 }
 
 /* RECEIPT */
 
-.receipt-container{
-    background:#f7f9f9;
-    color:#172526;
-    border-radius:12px;
-    overflow:hidden;
+.receipt{
+ background:white;
+ color:#182b2d;
 }
 
-.receipt-top{
-    background:linear-gradient(135deg,#073c3c,#08796f);
-    color:white;
-    padding:25px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
+.receiptTop{
+ padding:22px;
+ background:linear-gradient(135deg,#073d3d,#08796f);
+ color:white;
+ display:flex;
+ justify-content:space-between;
 }
 
-.receipt-school h1{
-    margin:0;
-    font-size:25px;
-}
-
-.receipt-school p{
-    margin:5px 0 0;
-    opacity:.75;
-    font-size:12px;
-}
-
-.receipt-label{
-    text-align:right;
-}
-
-.receipt-label strong{
-    display:block;
-    font-size:20px;
-}
-
-.receipt-label span{
-    font-size:11px;
-    opacity:.8;
-}
-
-.receipt-body{
-    padding:25px;
-}
-
-.receipt-student{
-    display:flex;
-    gap:18px;
-    align-items:center;
-    padding-bottom:20px;
-    border-bottom:1px solid #dce4e4;
-}
-
-.receipt-student img{
-    width:90px;
-    height:90px;
-    object-fit:cover;
-    border-radius:12px;
-    border:2px solid #d5dddd;
-}
-
-.receipt-student h3{
-    margin:0 0 5px;
-}
-
-.receipt-student p{
-    margin:4px 0;
-    color:#647374;
-    font-size:12px;
-}
-
-.receipt-details{
-    width:100%;
-    min-width:0;
-    margin-top:20px;
-}
-
-.receipt-details td{
-    color:#263839;
-    border:1px solid #dce4e4;
-    white-space:normal;
-}
-
-.receipt-details td:first-child{
-    width:35%;
-    font-weight:700;
-    background:#f0f5f5;
-}
-
-.amount-box{
-    margin-top:18px;
-    padding:18px;
-    background:#eaf6f3;
-    border:1px solid #c9e6df;
-    border-radius:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.amount-box strong{
-    font-size:25px;
-    color:#08796f;
-}
-
-.receipt-signatures{
-    display:flex;
-    justify-content:space-between;
-    margin-top:60px;
-    font-size:11px;
-    color:#596a6b;
-}
-
-.receipt-actions{
-    display:flex;
-    justify-content:flex-end;
-    gap:10px;
-    margin-bottom:15px;
-}
-
-/* REPORT */
-
-.report-summary{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:10px;
-    margin-bottom:15px;
-}
-
-.report-box{
-    background:#102528;
-    border:1px solid #203b3e;
-    padding:14px;
-    border-radius:10px;
-}
-
-.report-box span{
-    color:#7e999a;
-    font-size:11px;
-    display:block;
-    margin-bottom:6px;
-}
-
-.report-box strong{
-    font-size:18px;
-}
-
-/* EMPTY */
-
-.empty{
-    padding:30px;
-    text-align:center;
-    color:#70898a;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:1100px){
-    .money-grid{
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .dashboard{
-        grid-template-columns:repeat(2,1fr);
-    }
-}
-
-@media(max-width:700px){
-    .container{
-        padding:14px;
-    }
-
-    .header{
-        padding:18px;
-    }
-
-    .header-content{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-
-    .dashboard,
-    .money-grid,
-    .form-grid,
-    .report-summary{
-        grid-template-columns:1fr;
-    }
-
-    .receipt-top{
-        flex-direction:column;
-        align-items:flex-start;
-    }
-
-    .receipt-label{
-        text-align:left;
-    }
-
-    .receipt-student{
-        align-items:flex-start;
-    }
-
-    .receipt-actions{
-        flex-wrap:wrap;
-    }
-}
-
-/* PRINT RECEIPT ONLY */
-
-@media print{
-
-    body *{
-        visibility:hidden !important;
-    }
-
-    #receiptArea,
-    #receiptArea *{
-        visibility:visible !important;
-    }
-
-    #receiptArea{
-        position:absolute;
-        left:0;
-        top:0;
-        width:100%;
-    }
-
-    .no-print{
-        display:none !important;
-    }
-}
-</style>
-</head>
-
-<body>
-
-<header class="header">
-
-<div class="header-content">
-
-    <div class="school-title">
-
-        <div class="school-logo">AS</div>
-
-        <div>
-            <h1>ABC SCHOOL</h1>
-            <p>Student Fee Management System</p>
-        </div>
-
-    </div>
-
-    <div class="ai-badge">
-        AI POWERED • ACCOUNTS DASHBOARD
-    </div>
-
-</div>
-
-</header>
-
-
-<div class="container">
-
-<!-- TOP -->
-
-<div class="top-controls">
-
-    <div class="control-box">
-
-        <label>ACADEMIC YEAR</label>
-
-        <select id="academicYear">
-
-            <option>2026-27</option>
-            <option>2027-28</option>
-
-        </select>
-
-    </div>
-
-
-    <button
-        class="btn btn-primary"
-        onclick="openStudentModal()">
-
-        + ADD STUDENT
-
-    </button>
-
-</div>
-
-
-<!-- MONTHS -->
-
-<div
-    class="month-scroll"
-    id="monthBar">
-</div>
-
-
-<!-- DASHBOARD -->
-
-<div class="dashboard">
-
-    <div class="card blue">
-        <div class="card-title">TOTAL STUDENTS</div>
-        <div class="card-number" id="totalStudents">0</div>
-        <div class="card-sub">All registered students</div>
-    </div>
-
-    <div class="card green">
-        <div class="card-title">PAID STUDENTS</div>
-        <div class="card-number" id="paidStudents">0</div>
-        <div class="card-sub">Fee fully paid</div>
-    </div>
-
-    <div class="card yellow">
-        <div class="card-title">DUE STUDENTS</div>
-        <div class="card-number" id="dueStudents">0</div>
-        <div class="card-sub">Payment pending</div>
-    </div>
-
-    <div class="card red">
-        <div class="card-title">OVERDUE STUDENTS</div>
-        <div class="card-number" id="overdueStudents">0</div>
-        <div class="card-sub">Due date crossed</div>
-    </div>
-
-</div>
-
-
-<!-- MONEY -->
-
-<div class="money-grid">
-
-    <div class="money-card">
-        <span>TOTAL FEES</span>
-        <strong id="totalFees">₹0</strong>
-    </div>
-
-    <div class="money-card">
-        <span>TOTAL COLLECTED</span>
-        <strong id="totalCollected">₹0</strong>
-    </div>
-
-    <div class="money-card">
-        <span>BALANCE DUE</span>
-        <strong id="totalBalance">₹0</strong>
-    </div>
-
-    <div class="money-card">
-        <span>THIS MONTH</span>
-        <strong id="monthCollection">₹0</strong>
-    </div>
-
-    <div class="money-card">
-        <span>OVERDUE AMOUNT</span>
-        <strong id="overdueAmount">₹0</strong>
-    </div>
-
-</div>
-
-
-<!-- STUDENTS -->
-
-<div class="section">
-
-<div class="section-header">
-
-    <div>
-        <h2>Student Details</h2>
-        <p>Manage student fee records and transactions</p>
-    </div>
-
-    <button
-        class="btn btn-primary"
-        onclick="openStudentModal()">
-
-        + ADD STUDENT
-
-    </button>
-
-</div>
-
-
-<div class="table-wrapper">
-
-<table>
-
-<thead>
-
-<tr>
-<th>PHOTO</th>
-<th>STUDENT</th>
-<th>CLASS</th>
-<th>ROLL NO</th>
-<th>TOTAL FEE</th>
-<th>PAID</th>
-<th>BALANCE</th>
-<th>DUE DATE</th>
-<th>MODE</th>
-<th>STATUS</th>
-<th>RECEIPT</th>
-<th>DELETE</th>
-</tr>
-
-</thead>
-
-<tbody id="studentTable"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-
-<!-- MONTHLY REPORT -->
-
-<div class="section">
-
-<div class="section-header">
-
-<div>
-    <h2 id="monthlyTitle">
-        Monthly Fee Details
-    </h2>
-
-    <p>
-        Academic Year 2026–27
-    </p>
-</div>
-
-
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-
-    <button
-        class="btn btn-gold"
-        onclick="downloadMonthlyPDF()">
-
-        📄 MONTHLY PDF
-
-    </button>
-
-    <button
-        class="btn btn-blue"
-        onclick="printMonthlyReport()">
-
-        🖨 PRINT MONTHLY REPORT
-
-    </button>
-
-</div>
-
-</div>
-
-
-<div
-    class="report-summary"
-    id="reportSummary">
-</div>
-
-
-<div id="monthlyReport"></div>
-
-</div>
-
-</div>
-
-
-<!-- ADD STUDENT -->
-
-<div
-    class="modal"
-    id="studentModal">
-
-<div class="modal-content">
-
-<div class="modal-header">
-
-<h2>Add Student</h2>
-
-<span
-    class="close"
-    onclick="closeStudentModal()">
-    ×
-</span>
-
-</div>
-
-
-<form id="studentForm">
-
-<div class="form-grid">
-
-
-<div class="full">
-
-<label>Student Photo</label>
-
-<input
-    type="file"
-    id="studentPhoto"
-    accept="image/*"
-    onchange="previewPhoto(event)">
-
-<img
-    id="photoPreview"
-    class="photo-preview">
-
-</div>
-
-
-<div>
-<label>Student Name</label>
-<input id="studentName" required>
-</div>
-
-
-<div>
-<label>Class & Section</label>
-<input id="classSection" placeholder="10-A" required>
-</div>
-
-
-<div>
-<label>Roll No</label>
-<input id="rollNo">
-</div>
-
-
-<div>
-<label>Father / Guardian Name</label>
-<input id="guardianName">
-</div>
-
-
-<div>
-<label>Contact Number</label>
-<input id="contactNumber">
-</div>
-
-
-<div>
-<label>Total Fee (₹)</label>
-<input id="totalFee" type="number" min="0" required>
-</div>
-
-
-<div>
-<label>Amount Paid (₹)</label>
-<input id="amountPaid" type="number" min="0" value="0">
-</div>
-
-
-<div>
-<label>Paid Date</label>
-<input id="paidDate" type="date">
-</div>
-
-
-<div>
-<label>Due Date</label>
-<input id="dueDate" type="date">
-</div>
-
-
-<div>
-<label>Payment Mode</label>
-
-<select id="paymentMode">
-
-<option>Cash</option>
-<option>PhonePe</option>
-<option>Paytm</option>
-<option>GPay</option>
-
-</select>
-
-</div>
-
-
-<div>
-<label>Paid To</label>
-<input id="paidTo" placeholder="Number / Account">
-</div>
-
-
-<div>
-<label>Paid By</label>
-<input id="paidBy" placeholder="Parent Name / Number">
-</div>
-
-
-<div>
-<label>Transaction ID</label>
-<input id="transactionId">
-</div>
-
-
-<div class="full">
-<label>Remarks</label>
-<textarea id="remarks"></textarea>
-</div>
-
-
-<div class="full">
-
-<button
-    class="btn btn-primary"
-    type="submit">
-
-    SAVE STUDENT & CREATE RECORD
-
-</button>
-
-</div>
-
-</div>
-
-</form>
-
-</div>
-</div>
-
-
-<!-- RECEIPT -->
-
-<div
-    class="modal"
-    id="receiptModal">
-
-<div class="modal-content">
-
-<div class="receipt-actions no-print">
-
-<button
-    class="btn btn-primary"
-    onclick="printReceipt()">
-
-    🖨 PRINT RECEIPT
-
-</button>
-
-<button
-    class="btn btn-gold"
-    onclick="downloadReceiptPDF()">
-
-    📄 DOWNLOAD RECEIPT PDF
-
-</button>
-
-<button
-    class="btn btn-dark"
-    onclick="closeReceipt()">
-
-    CLOSE
-
-</button>
-
-</div>
-
-
-<div
-    id="receiptArea"
-    class="receipt-container">
-
-<div class="receipt-top">
-
-<div class="receipt-school">
-
-<h1>ABC SCHOOL</h1>
-
-<p>
-Student Fee Management System
-</p>
-
-</div>
-
-<div class="receipt-label">
-
-<strong>FEE RECEIPT</strong>
-
-<span>OFFICIAL PAYMENT RECORD</span>
-
-</div>
-
-</div>
-
-
-<div class="receipt-body">
-
-
-<div class="receipt-student">
-
-<img
-    id="receiptPhoto"
-    src="">
-
-<div>
-
-<h3 id="rName">Student Name</h3>
-
-<p>
-Class: <strong id="rClass"></strong>
-&nbsp;&nbsp; | &nbsp;&nbsp;
-Roll No: <strong id="rRoll"></strong>
-</p>
-
-<p>
-Academic Year:
-<strong id="rYear"></strong>
-</p>
-
-</div>
-
-</div>
-
-
-<table class="receipt-details">
-
-<tr>
-<td>Receipt No.</td>
-<td id="rReceipt"></td>
-</tr>
-
-<tr>
-<td>Payment Date</td>
-<td id="rDate"></td>
-</tr>
-
-<tr>
-<td>Father / Guardian</td>
-<td id="rGuardian"></td>
-</tr>
-
-<tr>
-<td>Contact Number</td>
-<td id="rContact"></td>
-</tr>
-
-<tr>
-<td>Total Fee</td>
-<td id="rTotal"></td>
-</tr>
-
-<tr>
-<td>Amount Paid</td>
-<td id="rPaid"></td>
-</tr>
-
-<tr>
-<td>Balance Due</td>
-<td id="rBalance"></td>
-</tr>
-
-<tr>
-<td>Payment Mode</td>
-<td id="rMode"></td>
-</tr>
-
-<tr>
-<td>Transaction ID</td>
-<td id="rTransaction"></td>
-</tr>
-
-<tr>
-<td>Paid By</td>
-<td id="rPaidBy"></td>
-</tr>
-
-<tr>
-<td>Paid To</td>
-<td id="rPaidTo"></td>
-</tr>
-
-</table>
-
-
-<div class="amount-box">
-
-<span>
-Amount Received
-</span>
-
-<strong id="rAmountBig">
-₹0
-</strong>
-
-</div>
-
-
-<p style="font-size:12px;margin-top:18px">
-
-<strong>Amount in Words:</strong>
-<span id="rWords"></span>
-
-</p>
-
-
-<div class="receipt-signatures">
-
-<span>Parent / Guardian Signature</span>
-
-<span>Authorized Signature</span>
-
-</div>
-
-
-<div style="
-text-align:center;
-margin-top:30px;
-font-size:10px;
-color:#819090">
-
-This is a computer-generated fee receipt.
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-/* ================================
-   SETTINGS
-================================ */
-
-const months = [
-"June",
-"July",
-"August",
-"September",
-"October",
-"November",
-"December",
-"January",
-"February",
-"March",
-"April"
-];
-
-let selectedMonth = "August";
-
-let students =
-JSON.parse(
-localStorage.getItem("abc_students") || "[]"
-);
-
-let receiptCounter =
-Number(
-localStorage.getItem("abc_receipt_counter") || 1000
-);
-
-
-/* ================================
-   CURRENCY
-================================ */
-
-function money(value){
-
-return "₹" +
-Number(value || 0).toLocaleString("en-IN");
-
-}
-
-
-/* ================================
-   MONTH BAR
-================================ */
-
-function createMonths(){
-
-const bar =
-document.getElementById("monthBar");
-
-bar.innerHTML="";
-
-months.forEach(month=>{
-
-const div =
-document.createElement("div");
-
-div.className =
-"month " +
-(month===selectedMonth ? "active":"");
-
-div.innerText=month;
-
-div.onclick=()=>{
-
-selectedMonth=month;
-
-createMonths();
-
-refresh();
-
-};
-
-bar.appendChild(div);
-
-});
-
-}
-
-
-/* ================================
-   ADD STUDENT MODAL
-================================ */
-
-function openStudentModal(){
-
-document.getElementById(
-"studentModal"
-).style.display="block";
-
-}
-
-function closeStudentModal(){
-
-document.getElementById(
-"studentModal"
-).style.display="none";
-
-}
-
-
-/* ================================
-   PHOTO
-================================ */
-
-function previewPhoto(event){
-
-const file =
-event.target.files[0];
-
-if(!file)return;
-
-const reader =
-new FileReader();
-
-reader.onload=e=>{
-
-const img =
-document.getElementById(
-"photoPreview"
-);
-
-img.src=e.target.result;
-
-img.style.display="block";
-
-};
-
-reader.readAsDataURL(file);
-
-}
-
-
-/* ================================
-   SAVE STUDENT
-================================ */
-
-document
-.getElementById("studentForm")
-.addEventListener(
-"submit",
-function(e){
-
-e.preventDefault();
-
-const total =
-Number(
-document.getElementById("totalFee").value || 0
-);
-
-const paid =
-Number(
-document.getElementById("amountPaid").value || 0
-);
-
-const balance =
-Math.max(total-paid,0);
-
-const dueDate =
-document.getElementById("dueDate").value;
-
-let status="Paid";
-
-if(balance>0){
-
-if(
-dueDate &&
-new Date(dueDate) < new Date()
-){
-
-status="Overdue";
-
-}else{
-
-status="Due";
-
-}
-
-}
-
-receiptCounter++;
-
-const student={
-
-id:Date.now(),
-
-photo:
-document.getElementById(
-"photoPreview"
-).src || "",
-
-name:
-document.getElementById(
-"studentName"
-).value,
-
-classSection:
-document.getElementById(
-"classSection"
-).value,
-
-rollNo:
-document.getElementById(
-"rollNo"
-).value,
-
-guardian:
-document.getElementById(
-"guardianName"
-).value,
-
-contact:
-document.getElementById(
-"contactNumber"
-).value,
-
-totalFee:total,
-
-amountPaid:paid,
-
-balance:balance,
-
-paidDate:
-document.getElementById(
-"paidDate"
-).value,
-
-dueDate:dueDate,
-
-paymentMode:
-document.getElementById(
-"paymentMode"
-).value,
-
-paidTo:
-document.getElementById(
-"paidTo"
-).value,
-
-paidBy:
-document.getElementById(
-"paidBy"
-).value,
-
-transactionId:
-document.getElementById(
-"transactionId"
-).value,
-
-remarks:
-document.getElementById(
-"remarks"
-).value,
-
-status:status,
-
-academicYear:
-document.getElementById(
-"academicYear"
-).value,
-
-receiptNo:
-"REC-" +
-receiptCounter
-
-};
-
-students.push(student);
-
-save();
-
-this.reset();
-
-document.getElementById(
-"photoPreview"
-).style.display="none";
-
-document.getElementById(
-"photoPreview"
-).src="";
-
-closeStudentModal();
-
-refresh();
-
-alert("Student record saved successfully.");
-
-});
-
-
-/* ================================
-   SAVE
-================================ */
-
-function save(){
-
-localStorage.setItem(
-"abc_students",
-JSON.stringify(students)
-);
-
-localStorage.setItem(
-"abc_receipt_counter",
-receiptCounter
-);
-
-}
-
-
-/* ================================
-   DASHBOARD
-================================ */
-
-function updateDashboard(){
-
-const total=students.length;
-
-const paid=
-students.filter(
-s=>s.status==="Paid"
-).length;
-
-const due=
-students.filter(
-s=>s.status==="Due"
-).length;
-
-const overdue=
-students.filter(
-s=>s.status==="Overdue"
-).length;
-
-const totalFees=
-students.reduce(
-(a,s)=>a+Number(s.totalFee),0
-);
-
-const collected=
-students.reduce(
-(a,s)=>a+Number(s.amountPaid),0
-);
-
-const balance=
-students.reduce(
-(a,s)=>a+Number(s.balance),0
-);
-
-const overdueAmount=
-students
-.filter(s=>s.status==="Overdue")
-.reduce(
-(a,s)=>a+Number(s.balance),0
-);
-
-const monthCollection=
-getMonthCollection(selectedMonth);
-
-document.getElementById(
-"totalStudents"
-).innerText=total;
-
-document.getElementById(
-"paidStudents"
-).innerText=paid;
-
-document.getElementById(
-"dueStudents"
-).innerText=due;
-
-document.getElementById(
-"overdueStudents"
-).innerText=overdue;
-
-document.getElementById(
-"totalFees"
-).innerText=money(totalFees);
-
-document.getElementById(
-"totalCollected"
-).innerText=money(collected);
-
-document.getElementById(
-"totalBalance"
-).innerText=money(balance);
-
-document.getElementById(
-"monthCollection"
-).innerText=money(monthCollection);
-
-document.getElementById(
-"overdueAmount"
-).innerText=money(overdueAmount);
-
-}
-
-
-/* ================================
-   MONTH COLLECTION
-================================ */
-
-function getMonthCollection(month){
-
-return students.reduce(
-(sum,s)=>{
-
-if(!s.paidDate)return sum;
-
-const date =
-new Date(s.paidDate);
-
-const name =
-date.toLocaleString(
-"en-US",
-{month:"long"}
-);
-
-return name===month
-? sum+Number(s.amountPaid)
-: sum;
-
-},0);
-
-}
-
-
-/* ================================
-   STUDENT TABLE
-================================ */
-
-function renderStudents(){
-
-const table =
-document.getElementById(
-"studentTable"
-);
-
-table.innerHTML="";
-
-if(!students.length){
-
-table.innerHTML=`
-
-<tr>
-<td colspan="12" class="empty">
-No student records yet.<br><br>
-Click <b>+ ADD STUDENT</b> to create a record.
-</td>
-</tr>
-
-`;
-
-return;
-
-}
-
-students.forEach(s=>{
-
-const tr=
-document.createElement("tr");
+.receiptTop h2{margin:0}
+.receiptTop p{font-size:10px}
 
-let statusClass=
-s.status==="Paid"
-?"status-paid"
-:s.status==="Due"
-?"status-due"
-:"status-overdue";
-
-const photo=
-s.photo ||
-"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23dfe9e9'/%3E%3Ctext x='50' y='58' text-anchor='middle' font-size='35' fill='%23708080'%3E%3F%3C/text%3E%3C/svg%3E";
-
-tr.innerHTML=`
-
-<td>
-<img
-class="student-photo"
-src="${photo}">
-</td>
-
-<td>
-<strong>${escapeHTML(s.name)}</strong>
-</td>
-
-<td>${escapeHTML(s.classSection)}</td>
-
-<td>${escapeHTML(s.rollNo || "-")}</td>
-
-<td>${money(s.totalFee)}</td>
-
-<td>${money(s.amountPaid)}</td>
-
-<td>${money(s.balance)}</td>
-
-<td>${s.dueDate || "-"}</td>
-
-<td>${escapeHTML(s.paymentMode)}</td>
-
-<td>
-<span class="status ${statusClass}">
-${s.status}
-</span>
-</td>
-
-<td>
-
-<button
-class="btn btn-primary"
-onclick="showReceipt(${s.id})">
-
-VIEW RECEIPT
-
-</button>
-
-</td>
-
-<td>
-
-<button
-class="btn btn-danger"
-onclick="deleteStudent(${s.id})">
-
-DELETE
-
-</button>
-
-</td>
-
-`;
-
-table.appendChild(tr);
-
-});
-
-}
-
-
-/* ================================
-   DELETE
-================================ */
-
-function deleteStudent(id){
-
-const student=
-students.find(s=>s.id===id);
-
-if(!student)return;
-
-const ok=
-confirm(
-"Delete student record for " +
-student.name +
-"?"
-);
-
-if(!ok)return;
-
-students=
-students.filter(
-s=>s.id!==id
-);
-
-save();
-
-refresh();
-
-}
-
-
-/* ================================
-   RECEIPT
-================================ */
-
-function showReceipt(id){
-
-const s=
-students.find(
-x=>x.id===id
-);
-
-if(!s)return;
-
-const photo=
-s.photo ||
-"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23dfe9e9'/%3E%3Ctext x='50' y='58' text-anchor='middle' font-size='35' fill='%23708080'%3E%3F%3C/text%3E%3C/svg%3E";
-
-document.getElementById(
-"receiptPhoto"
-).src=photo;
-
-document.getElementById(
-"rName"
-).innerText=s.name;
-
-document.getElementById(
-"rClass"
-).innerText=s.classSection;
-
-document.getElementById(
-"rRoll"
-).innerText=s.rollNo || "-";
-
-document.getElementById(
-"rYear"
-).innerText=s.academicYear;
-
-document.getElementById(
-"rReceipt"
-).innerText=s.receiptNo;
-
-document.getElementById(
-"rDate"
-).innerText=
-s.paidDate || "-";
-
-document.getElementById(
-"rGuardian"
-).innerText=
-s.guardian || "-";
-
-document.getElementById(
-"rContact"
-).innerText=
-s.contact || "-";
-
-document.getElementById(
-"rTotal"
-).innerText=
-money(s.totalFee);
-
-document.getElementById(
-"rPaid"
-).innerText=
-money(s.amountPaid);
-
-document.getElementById(
-"rBalance"
-).innerText=
-money(s.balance);
-
-document.getElementById(
-"rMode"
-).innerText=
-s.paymentMode;
-
-document.getElementById(
-"rTransaction"
-).innerText=
-s.transactionId || "-";
-
-document.getElementById(
-"rPaidBy"
-).innerText=
-s.paidBy || "-";
-
-document.getElementById(
-"rPaidTo"
-).innerText=
-s.paidTo || "-";
-
-document.getElementById(
-"rAmountBig"
-).innerText=
-money(s.amountPaid);
-
-document.getElementById(
-"rWords"
-).innerText=
-numberToWords(s.amountPaid)+
-" Rupees Only";
-
-document.getElementById(
-"receiptModal"
-).style.display="block";
-
-}
-
-
-function closeReceipt(){
-
-document.getElementById(
-"receiptModal"
-).style.display="none";
-
-}
-
-
-/* ================================
-   PRINT RECEIPT
-================================ */
-
-function printReceipt(){
-
-window.print();
-
-}
-
-
-/* ================================
-   MONTHLY REPORT
-================================ */
-
-function updateMonthlyReport(){
-
-document.getElementById(
-"monthlyTitle"
-).innerText=
-selectedMonth+
-" 2026 Fee Details";
-
-const list=
-students.filter(s=>{
-
-if(!s.paidDate)return false;
-
-const d=
-new Date(s.paidDate);
-
-return d.toLocaleString(
-"en-US",
-{month:"long"}
-)===selectedMonth;
-
-});
-
-
-const totalCollected=
-list.reduce(
-(a,s)=>a+Number(s.amountPaid),0
-);
-
-const transactions=list.length;
-
-const uniqueStudents=
-new Set(
-list.map(s=>s.id)
-).size;
-
-const balance=
-list.reduce(
-(a,s)=>a+Number(s.balance),0
-);
-
-
-document.getElementById(
-"reportSummary"
-).innerHTML=`
-
-<div class="report-box">
-<span>TRANSACTIONS</span>
-<strong>${transactions}</strong>
-</div>
-
-<div class="report-box">
-<span>STUDENTS</span>
-<strong>${uniqueStudents}</strong>
-</div>
-
-<div class="report-box">
-<span>COLLECTION</span>
-<strong>${money(totalCollected)}</strong>
-</div>
-
-<div class="report-box">
-<span>BALANCE</span>
-<strong>${money(balance)}</strong>
-</div>
-
-`;
-
-
-if(!list.length){
-
-document.getElementById(
-"monthlyReport"
-).innerHTML=`
-
-<div class="empty">
-No transactions found for
-${selectedMonth} 2026.
-</div>
-
-`;
-
-return;
-
-}
-
-
-let html=`
-
-<div class="table-wrapper">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Receipt No</th>
-<th>Student</th>
-<th>Class</th>
-<th>Payment Date</th>
-<th>Amount Paid</th>
-<th>Payment Mode</th>
-<th>Transaction ID</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-`;
-
-
-list.forEach(s=>{
-
-html+=`
-
-<tr>
-
-<td>${s.receiptNo}</td>
-
-<td>${escapeHTML(s.name)}</td>
-
-<td>${escapeHTML(s.classSection)}</td>
-
-<td>${s.paidDate}</td>
-
-<td>${money(s.amountPaid)}</td>
-
-<td>${escapeHTML(s.paymentMode)}</td>
-
-<td>${escapeHTML(s.transactionId || "-")}</td>
-
-</tr>
-
-`;
-
-});
-
-
-html+=`
-
-</tbody>
-</table>
-</div>
-
-`;
-
-document.getElementById(
-"monthlyReport"
-).innerHTML=html;
-
-}
-
-
-/* ================================
-   PRINT MONTHLY
-================================ */
-
-function printMonthlyReport(){
-
-const report=
-document.getElementById(
-"monthlyReport"
-).innerHTML;
-
-const summary=
-document.getElementById(
-"reportSummary"
-).innerHTML;
-
-const win=
-window.open(
-"",
-"_blank",
-"width=1100,height=800"
-);
-
-win.document.write(`
-
-<html>
-
-<head>
-
-<title>
-ABC School - ${selectedMonth} Fee Report
-</title>
-
-<style>
-
-body{
-font-family:Arial;
-padding:30px;
-color:#222;
-}
-
-h1{
-text-align:center;
-margin-bottom:4px;
-}
-
-h2{
-text-align:center;
-font-weight:normal;
-}
-
-.summary{
-display:flex;
-gap:10px;
-margin:20px 0;
-}
-
-.box{
-border:1px solid #ccc;
-padding:15px;
-flex:1;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-}
-
-th,td{
-border:1px solid #ccc;
-padding:9px;
-font-size:12px;
-}
-
-th{
-background:#eee;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>ABC SCHOOL</h1>
-
-<h2>
-${selectedMonth} 2026 Fee Collection Report
-</h2>
-
-<div class="summary">
-${summary}
-</div>
-
-${report}
-
-</body>
-
-</html>
-
-`);
-
-win.document.close();
-
-win.onload=()=>{
-
-win.print();
-
-};
-
-}
-
-
-/* ================================
-   MONTHLY PDF
-   Browser Save as PDF
-================================ */
-
-function downloadMonthlyPDF(){
-
-const report=
-document.getElementById(
-"monthlyReport"
-).innerHTML;
-
-const summary=
-document.getElementById(
-"reportSummary"
-).innerHTML;
-
-const win=
-window.open(
-"",
-"_blank",
-"width=1100,height=800"
-);
-
-win.document.write(`
-
-<html>
-
-<head>
-
-<title>
-ABC School - ${selectedMonth} 2026 Monthly PDF
-</title>
-
-<style>
-
-body{
-font-family:Arial;
-padding:35px;
-color:#222;
-}
-
-h1{
-text-align:center;
-margin:0;
-}
-
-h2{
-text-align:center;
-font-weight:normal;
-}
-
-.summary{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:10px;
-margin:25px 0;
-}
-
-.report-box{
-border:1px solid #ccc;
-padding:15px;
-}
-
-.report-box span{
-display:block;
-font-size:10px;
-color:#777;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-}
-
-th,td{
-border:1px solid #ccc;
-padding:9px;
-font-size:11px;
-}
-
-th{
-background:#eee;
+.voucher{
+ text-align:right;
 }
-
-</style>
-
-</head>
-
-<body>
-
-<h1>ABC SCHOOL</h1>
-
-<h2>
-${selectedMonth} 2026 Monthly Fee Details
-</h2>
-
-<p style="text-align:center">
-Academic Year: 2026-27
-</p>
-
-<div class="summary">
-${summary}
-</div>
-
-${report}
-
-</body>
-
-</html>
-
-`);
-
-win.document.close();
-
-win.onload=()=>{
-
-/*
-Browser print dialog opens.
-Choose:
-Destination → Save as PDF
-*/
-
-win.print();
 
-};
-
+.voucher strong{
+ display:block;
+ font-size:18px;
 }
-
-
-/* ================================
-   NUMBER TO WORDS
-================================ */
-
-function numberToWords(num){
-
-num=Math.floor(Number(num)||0);
-
-if(num===0)return "Zero";
-
-const ones=[
-"",
-"One","Two","Three","Four","Five",
-"Six","Seven","Eight","Nine","Ten",
-"Eleven","Twelve","Thirteen","Fourteen",
-"Fifteen","Sixteen","Seventeen","Eighteen",
-"Nineteen"
-];
-
-const tens=[
-"","","Twenty","Thirty","Forty",
-"Fifty","Sixty","Seventy","Eighty","Ninety"
-];
 
-function convert(n){
+.receiptBody{padding:24px}
 
-if(n<20)return ones[n];
-
-if(n<100){
-
-return tens[
-Math.floor(n/10)
-]+
-(n%10?" "+ones[n%10]:"");
-
+.studentInfo{
+ display:flex;
+ gap:18px;
+ align-items:center;
+ border-bottom:1px solid #d7e0e0;
+ padding-bottom:18px;
 }
-
-if(n<1000){
 
-return ones[
-Math.floor(n/100)
-]+
-" Hundred "+
-(n%100?convert(n%100):"");
-
+.studentInfo img{
+ width:100px;
+ height:100px;
+ object-fit:cover;
+ border-radius:10px;
 }
-
-if(n<100000){
 
-return convert(
-Math.floor(n/1000)
-)+
-" Thousand "+
-(n%1000?convert(n%1000):"");
+.studentInfo h3{margin:0 0 7px}
 
+.studentInfo p{
+ margin:4px 0;
+ font-size:10px;
+ color:#617273;
 }
-
-if(n<10000000){
-
-return convert(
-Math.floor(n/100000)
-)+
-" Lakh "+
-(n%100000?convert(n%100000):"");
 
+.receiptTable{
+ width:100%;
+ min-width:0;
+ border-collapse:collapse;
+ margin-top:20px;
 }
 
-return convert(
-Math.floor(n/10000000)
-)+
-" Crore "+
-(n%10000000?
-convert(n%10000000):"");
-
+.receiptTable td{
+ border:1px solid #ccd7d7;
+ padding:9px;
+ white-space:normal;
 }
-
-return convert(num);
 
+.receiptTable td:first-child{
+ width:35%;
+ background:#eef4f4;
+ font-weight:bold;
 }
-
-
-/* ================================
-   ESCAPE
-================================ */
 
-function escapeHTML(value){
-
-return String(value ?? "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
+.amountBox{
+ margin-top:18px;
+ padding:15px;
+ display:flex;
+ justify-content:space-between;
+ background:#e9f7f3;
+ border:1px solid #c9e7df;
+ border-radius:9px;
 }
-
-
-/* ================================
-   REFRESH
-================================ */
 
-function refresh(){
-
-updateDashboard();
-
-renderStudents();
-
-updateMonthlyReport();
-
+.amountBox strong{
+ color:#08796f;
+ font-size:25px;
 }
-
-
-/* ================================
-   START
-================================ */
-
-createMonths();
-
-refresh();
-
-</script>
 
-</body>
-</html>
+.signatures{
+ display:flex;
+ justify-content:space-between;
+ margin-top:60px;
+ font-size:9px;
+ color:#657
