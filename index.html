@@ -129,7 +129,7 @@
       <div class="sub">ACCOUNTANT PANEL</div>
     </div>
   </div>
-  <select id="academicYear">
+  <select id="academicYear" onchange="saveAcademicYear()">
     <option>2026–27</option>
     <option>2027–28</option>
   </select>
@@ -147,6 +147,11 @@
     <div class="toolbar-right">
       <button class="btn btn-navy" onclick="printReceiptLast()">🖨 Print Receipt</button>
       <button class="btn btn-ghost" onclick="printMonthlyPdf()">📄 Print Monthly PDF</button>
+      <button class="btn btn-ghost" onclick="exportBackup()">⬇ Backup Data</button>
+      <label class="btn btn-ghost" style="display:inline-flex;align-items:center;gap:6px;">
+        ⬆ Restore Data
+        <input type="file" accept=".json,application/json" onchange="importBackup(this)" style="display:none;">
+      </label>
     </div>
   </div>
 
@@ -231,7 +236,27 @@
 const months = ["April 2026","May 2026","June 2026","July 2026","August 2026","September 2026",
   "October 2026","November 2026","December 2026","January 2027","February 2027","March 2027"];
 
-let students = [];
+const STORAGE_KEY = "infinity_one_accountant_students_v1";
+let students = loadStudents();
+
+function loadStudents(){
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  }catch(err){
+    console.error("Could not load saved data:", err);
+    return [];
+  }
+}
+
+function saveStudents(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+  }catch(err){
+    console.error("Could not save data:", err);
+    alert("Data save avvaledu. Browser storage full or blocked.");
+  }
+}
 
 const TODAY = new Date("2026-08-15");
 
@@ -378,6 +403,7 @@ function saveStudent(){
     receiptNo: "RCT-2026-0" + (100 + students.length + Math.floor(Math.random()*90)),
   };
   students.push(newStudent);
+  saveStudents();
   renderAll();
   closeAddModal();
   document.querySelectorAll("#addModal input, #addModal textarea").forEach(el=>{ if(el.type!=="file") el.value=""; else el.value=null; });
@@ -478,6 +504,58 @@ function printMonthlyPdf(){
   `;
   window.print();
 }
+
+
+function saveAcademicYear(){
+  localStorage.setItem("infinity_one_accountant_year", document.getElementById("academicYear").value);
+}
+
+function loadAcademicYear(){
+  const saved = localStorage.getItem("infinity_one_accountant_year");
+  if(saved) document.getElementById("academicYear").value = saved;
+}
+
+function exportBackup(){
+  const backup = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    academicYear: document.getElementById("academicYear").value,
+    students
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "infinity-one-accountant-backup.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importBackup(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const backup = JSON.parse(e.target.result);
+      if(!backup || !Array.isArray(backup.students)) throw new Error("Invalid backup");
+      students = backup.students;
+      saveStudents();
+      if(backup.academicYear){
+        document.getElementById("academicYear").value = backup.academicYear;
+        saveAcademicYear();
+      }
+      renderAll();
+      alert("Backup data restored successfully.");
+    }catch(err){
+      alert("Invalid backup file.");
+    }
+    input.value = "";
+  };
+  reader.readAsText(file);
+}
+
+loadAcademicYear();
 
 // init month dropdown
 const monthSelect = document.getElementById("monthSelect");
