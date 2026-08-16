@@ -76,6 +76,7 @@
   .badge.due{background:var(--warn-bg); color:var(--warn);}
   .badge.overdue{background:var(--bad-bg); color:var(--bad);}
   .link-btn{color:var(--navy); font-weight:700; font-size:0.8rem; cursor:pointer; text-decoration:underline;}
+  .delete-btn{color:var(--bad); font-weight:700; font-size:0.78rem; cursor:pointer; border:1px solid #efb5b5; background:#fff5f5; padding:5px 9px; border-radius:7px;}
   .empty-row td{text-align:center; padding:40px; color:var(--muted);}
 
   /* MODAL */
@@ -166,7 +167,7 @@
         <tr>
           <th>Photo</th><th>Student Name</th><th>Class & Section</th><th>Roll No</th>
           <th>Total Fee</th><th>Amount Paid</th><th>Paid Date</th><th>Balance Due</th>
-          <th>Due Date</th><th>Payment Mode</th><th>Paid To</th><th>Paid By</th><th>Status</th><th>Receipt</th>
+          <th>Due Date</th><th>Payment Mode</th><th>Paid To</th><th>Paid By</th><th>Status</th><th>Receipt</th><th>Action</th>
         </tr>
       </thead>
       <tbody id="studentTableBody"></tbody>
@@ -328,11 +329,11 @@ function renderTable(){
   const filtered = currentFilter === "all" ? indexed : indexed.filter(p => statusOf(p.s) === currentFilter);
 
   if(students.length===0){
-    body.innerHTML = `<tr class="empty-row"><td colspan="14">No students added yet — click "+ Add Student" to get started.</td></tr>`;
+    body.innerHTML = `<tr class="empty-row"><td colspan="15">No students added yet — click "+ Add Student" to get started.</td></tr>`;
     return;
   }
   if(filtered.length===0){
-    body.innerHTML = `<tr class="empty-row"><td colspan="14">No students match this filter.</td></tr>`;
+    body.innerHTML = `<tr class="empty-row"><td colspan="15">No students match this filter.</td></tr>`;
     return;
   }
   body.innerHTML = filtered.map(({s,i})=>{
@@ -409,6 +410,21 @@ function saveStudent(){
   document.querySelectorAll("#addModal input, #addModal textarea").forEach(el=>{ if(el.type!=="file") el.value=""; else el.value=null; });
   document.getElementById("f_photo_preview").style.display = "none";
   pendingPhotoData = null;
+}
+
+function deleteStudent(i){
+  const student = students[i];
+  if(!student) return;
+
+  const ok = confirm(
+    `Delete student "${student.name}"?\\n\\nThis will permanently remove this student's saved fee record from this browser.`
+  );
+
+  if(!ok) return;
+
+  students.splice(i, 1);
+  saveStudents();
+  renderAll();
 }
 
 function receiptHtml(s){
