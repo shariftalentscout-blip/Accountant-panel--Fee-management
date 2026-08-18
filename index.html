@@ -140,389 +140,58 @@
 
   <div class="stats-grid" id="statsGrid"></div>
 
-  <div class="toolbar">
-    <div class="toolbar-left">
-      <button class="btn btn-primary" onclick="openAddModal()">+ Add Student</button>
-      <select id="monthSelect" onchange="renderMonthLabel()"></select>
-    </div>
-    <div class="toolbar-right">
-      <button class="btn btn-navy" onclick="printReceiptLast()">🖨 Print Receipt</button>
-      <button class="btn btn-ghost" onclick="printMonthlyPdf()">📄 Print Monthly PDF</button>
-    </div>
+  <div class="filter-banner" id="filterBanner">
+    <span>Showing filtered results based on dashboard selection.</span>
+    <span class="clear-link" onclick="clearDashboardFilter()">✕ Clear Filter</span>
   </div>
 
-  <div class="filter-banner" id="filterBanner">
-    <span id="filterBannerText"></span>
-    <span class="clear-link" onclick="setFilter('all')">✕ Clear Filter</span>
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <select id="classFilter" onchange="renderTable()">
+        <option value="">All Classes</option>
+        <option value="1st Class">1st Class</option>
+        <option value="2nd Class">2nd Class</option>
+        <option value="3rd Class">3rd Class</option>
+      </select>
+      <select id="statusFilter" onchange="renderTable()">
+        <option value="">All Statuses</option>
+        <option value="Paid">Paid</option>
+        <option value="Due">Due</option>
+        <option value="Overdue">Overdue</option>
+      </select>
+    </div>
+    <div class="toolbar-right">
+      <button class="btn btn-navy" onclick="printMonthlyReport()">📄 Print Monthly PDF</button>
+      <button class="btn btn-primary" onclick="openAddModal()">+ Add Student</button>
+    </div>
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>Photo</th><th>Student Name</th><th>Class & Section</th><th>Roll No</th>
-          <th>Total Fee</th><th>Amount Paid</th><th>Paid Date</th><th>Balance Due</th>
-          <th>Due Date</th><th>Payment Mode</th><th>Paid To</th><th>Paid By</th><th>Status</th><th>Receipt</th><th>Action</th>
+          <th>Photo</th>
+          <th>Student Name</th>
+          <th>Class & Section</th>
+          <th>Roll No</th>
+          <th>Total Fee</th>
+          <th>Amount Paid</th>
+          <th>Paid Date</th>
+          <th>Balance Due</th>
+          <th>Due Date</th>
+          <th>Payment Mode</th>
+          <th>Status</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody id="studentTableBody"></tbody>
     </table>
   </div>
-
-  <div class="toolbar" style="margin-top:20px;">
-    <div><strong id="monthTitle" style="color:var(--navy);"></strong> <span style="color:var(--muted); font-size:0.85rem;">Fee Details</span></div>
-    <div class="toolbar-right">
-      <button class="btn btn-ghost" onclick="printMonthlyPdf()">📄 Print / Save Monthly PDF</button>
-    </div>
-  </div>
-
 </div>
 
 <!-- ADD STUDENT MODAL -->
-<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
+<div class="modal-overlay" id="addModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeAddModal()">✕</button>
+    <button class="modal-close" onclick="closeModal('addModal')">✕</button>
     <h2>Add Student</h2>
-    <div class="form-grid">
-      <div class="form-field" style="grid-column:1 / -1;">
-        <label>Student Photo</label>
-        <input type="file" id="f_photo" accept="image/*" onchange="previewPhoto(this)">
-        <img id="f_photo_preview" style="display:none; width:56px; height:56px; border-radius:8px; object-fit:cover; margin-top:8px; border:1px solid var(--border);">
-      </div>
-      <div class="form-field"><label>Student Name *</label><input type="text" id="f_name" placeholder="e.g. Priya Sharma"></div>
-      <div class="form-field"><label>Class & Section *</label><input type="text" id="f_class" placeholder="e.g. 7th A"></div>
-      <div class="form-field"><label>Roll No</label><input type="text" id="f_roll" placeholder="e.g. 12"></div>
-      <div class="form-field"><label>Father / Guardian Name</label><input type="text" id="f_guardian" placeholder="e.g. Mr. Sharma"></div>
-      <div class="form-field"><label>Contact Number</label><input type="text" id="f_contact" placeholder="9XXXXXXXXX"></div>
-      <div class="form-field"><label>Total Fee (₹) *</label><input type="number" id="f_total" placeholder="24000"></div>
-      <div class="form-field"><label>Amount Paid (₹)</label><input type="number" id="f_paid" placeholder="0" value="0"></div>
-      <div class="form-field"><label>Paid Date</label><input type="date" id="f_paiddate"></div>
-      <div class="form-field"><label>Due Date</label><input type="date" id="f_duedate"></div>
-      <div class="form-field"><label>Payment Mode</label>
-        <select id="f_mode"><option>Cash</option><option>PhonePe</option><option>Paytm</option><option>GPay</option><option>-</option></select>
-      </div>
-      <div class="form-field"><label>Paid To</label><input type="text" id="f_paidto" placeholder="School Office / A/c No."></div>
-      <div class="form-field"><label>Paid By</label><input type="text" id="f_paidby" placeholder="Parent name / number"></div>
-      <div class="form-field"><label>Transaction ID</label><input type="text" id="f_txn" placeholder="Optional"></div>
-      <div class="form-field"><label>Entered By</label><input type="text" id="f_enteredby" placeholder="Accountant name"></div>
-      <div class="form-field" style="grid-column:1 / -1;"><label>Remarks</label><textarea id="f_remarks" rows="2" placeholder="Optional notes"></textarea></div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-ghost" onclick="closeAddModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveStudent()">Save Student</button>
-    </div>
-  </div>
-</div>
-
-<!-- RECEIPT MODAL -->
-<div class="modal-overlay" id="receiptModal" onclick="if(event.target===this)closeReceiptModal()">
-  <div class="modal-box wide">
-    <button class="modal-close" onclick="closeReceiptModal()">✕</button>
-    <div class="receipt" id="receiptContent"></div>
-    <div class="form-actions">
-      <button class="btn btn-ghost" onclick="closeReceiptModal()">Close</button>
-      <button class="btn btn-navy" onclick="printReceiptFromModal()">🖨 Print Receipt</button>
-    </div>
-  </div>
-</div>
-
-<div id="printArea"></div>
-
-<script>
-const months = ["April 2026","May 2026","June 2026","July 2026","August 2026","September 2026",
-  "October 2026","November 2026","December 2026","January 2027","February 2027","March 2027"];
-
-const STORAGE_KEY = "infinity_one_accountant_students";
-let students = loadStudents();
-
-function loadStudents(){
-  try{
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
-  }catch(err){
-    console.error("Could not load saved data:", err);
-    return [];
-  }
-}
-
-function saveStudents(){
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
-  }catch(err){
-    console.error("Could not save data:", err);
-    alert("Data save avvaledu. Browser storage full or blocked.");
-  }
-}
-
-const TODAY = new Date("2026-08-15");
-
-function fmtMoney(n){ return "₹" + Number(n).toLocaleString("en-IN"); }
-function fmtDate(d){ if(!d) return "-"; const dt = new Date(d); return dt.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}); }
-
-function statusOf(s){
-  const bal = s.total - s.paid;
-  if(bal <= 0) return "paid";
-  if(s.dueDate && new Date(s.dueDate) < TODAY) return "overdue";
-  return "due";
-}
-
-function initials(name){
-  return name.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
-}
-
-function renderStats(){
-  const total = students.length;
-  const paidCount = students.filter(s=>statusOf(s)==="paid").length;
-  const dueCount = students.filter(s=>statusOf(s)==="due").length;
-  const overdueCount = students.filter(s=>statusOf(s)==="overdue").length;
-  const totalFees = students.reduce((a,s)=>a+s.total,0);
-  const collected = students.reduce((a,s)=>a+s.paid,0);
-  const balance = totalFees - collected;
-  const todayStr = "2026-08-15";
-  const todayCollection = students.filter(s=>s.paidDate===todayStr).reduce((a,s)=>a+s.paid,0);
-  const monthCollection = students.filter(s=>s.paidDate && s.paidDate.startsWith("2026-06")).reduce((a,s)=>a+s.paid,0);
-  const overdueAmount = students.filter(s=>statusOf(s)==="overdue").reduce((a,s)=>a+(s.total-s.paid),0);
-
-  const cards = [
-    {lbl:"Total Students", val:total, cls:"", filter:"all"},
-    {lbl:"Paid Students", val:paidCount, cls:"good", filter:"paid"},
-    {lbl:"Due Students", val:dueCount, cls:"gold", filter:"due"},
-    {lbl:"Overdue Students", val:overdueCount, cls:"bad", filter:"overdue"},
-    {lbl:"Total Fees", val:fmtMoney(totalFees), cls:""},
-    {lbl:"Total Collected", val:fmtMoney(collected), cls:"good"},
-    {lbl:"Total Balance", val:fmtMoney(balance), cls:"gold"},
-    {lbl:"Today Collection", val:fmtMoney(todayCollection), cls:""},
-    {lbl:"This Month Collection", val:fmtMoney(monthCollection), cls:""},
-    {lbl:"Overdue Amount", val:fmtMoney(overdueAmount), cls:"bad"},
-  ];
-  document.getElementById("statsGrid").innerHTML = cards.map(c=>
-    `<div class="stat-card ${c.cls} ${c.filter ? 'clickable' : ''} ${c.filter===currentFilter ? 'active-filter' : ''}" ${c.filter ? `onclick="setFilter('${c.filter}')"` : ''}><div class="lbl">${c.lbl}</div><div class="val">${c.val}</div></div>`
-  ).join("");
-}
-
-let currentFilter = "all";
-
-function setFilter(f){
-  currentFilter = (currentFilter === f) ? "all" : f;
-  renderAll();
-}
-
-function renderTable(){
-  const body = document.getElementById("studentTableBody");
-  const banner = document.getElementById("filterBanner");
-  const bannerText = document.getElementById("filterBannerText");
-
-  const filterLabels = {due:"Due Students", overdue:"Overdue Students", paid:"Paid Students", all:"All Students"};
-  if(currentFilter !== "all"){
-    banner.classList.add("active");
-    bannerText.textContent = `Showing: ${filterLabels[currentFilter]}`;
-  } else {
-    banner.classList.remove("active");
-  }
-
-  const indexed = students.map((s,i)=>({s,i}));
-  const filtered = currentFilter === "all" ? indexed : indexed.filter(p => statusOf(p.s) === currentFilter);
-
-  if(students.length===0){
-    body.innerHTML = `<tr class="empty-row"><td colspan="15">No students added yet — click "+ Add Student" to get started.</td></tr>`;
-    return;
-  }
-  if(filtered.length===0){
-    body.innerHTML = `<tr class="empty-row"><td colspan="15">No students match this filter.</td></tr>`;
-    return;
-  }
-  body.innerHTML = filtered.map(({s,i})=>{
-    const bal = s.total - s.paid;
-    const st = statusOf(s);
-    const badgeClass = st==="paid" ? "paid" : st==="overdue" ? "overdue" : "due";
-    const badgeLabel = st==="paid" ? "Paid" : st==="overdue" ? "Overdue" : "Due";
-    return `<tr>
-      <td><div class="avatar">${s.photo && s.photo.startsWith('data:') ? `<img src="${s.photo}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">` : initials(s.name)}</div></td>
-      <td><strong>${s.name}</strong></td>
-      <td>${s.cls}</td>
-      <td>${s.roll}</td>
-      <td>${fmtMoney(s.total)}</td>
-      <td>${fmtMoney(s.paid)}</td>
-      <td>${fmtDate(s.paidDate)}</td>
-      <td>${fmtMoney(bal)}</td>
-      <td>${fmtDate(s.dueDate)}</td>
-      <td>${s.mode}</td>
-      <td>${s.paidTo}</td>
-      <td>${s.paidBy}</td>
-      <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
-      <td><span class="link-btn" onclick="viewReceipt(${i})">View</span></td>
-    </tr>`;
-  }).join("");
-}
-
-function renderAll(){ renderStats(); renderTable(); }
-
-let pendingPhotoData = null;
-
-function previewPhoto(input){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e){
-    pendingPhotoData = e.target.result;
-    const img = document.getElementById("f_photo_preview");
-    img.src = pendingPhotoData;
-    img.style.display = "block";
-  };
-  reader.readAsDataURL(file);
-}
-
-function openAddModal(){ document.getElementById("addModal").classList.add("active"); }
-function closeAddModal(){ document.getElementById("addModal").classList.remove("active"); }
-
-function saveStudent(){
-  const name = document.getElementById("f_name").value.trim();
-  const cls = document.getElementById("f_class").value.trim();
-  const total = Number(document.getElementById("f_total").value) || 0;
-  if(!name || !cls || !total){ alert("Student Name, Class & Section, and Total Fee are required."); return; }
-  const newStudent = {
-    photo: pendingPhotoData || "[Insert Photo]",
-    name, cls,
-    roll: document.getElementById("f_roll").value,
-    guardian: document.getElementById("f_guardian").value,
-    contact: document.getElementById("f_contact").value,
-    total,
-    paid: Number(document.getElementById("f_paid").value) || 0,
-    paidDate: document.getElementById("f_paiddate").value,
-    dueDate: document.getElementById("f_duedate").value,
-    mode: document.getElementById("f_mode").value,
-    paidTo: document.getElementById("f_paidto").value || "-",
-    paidBy: document.getElementById("f_paidby").value || "-",
-    txn: document.getElementById("f_txn").value || "-",
-    enteredBy: document.getElementById("f_enteredby").value || "-",
-    remarks: document.getElementById("f_remarks").value,
-    receiptNo: "RCT-2026-0" + (100 + students.length + Math.floor(Math.random()*90)),
-  };
-  students.push(newStudent);
-  saveStudents();
-  renderAll();
-  closeAddModal();
-  document.querySelectorAll("#addModal input, #addModal textarea").forEach(el=>{ if(el.type!=="file") el.value=""; else el.value=null; });
-  document.getElementById("f_photo_preview").style.display = "none";
-  pendingPhotoData = null;
-}
-
-function deleteStudent(i){
-  const student = students[i];
-  if(!student) return;
-
-  if(!confirm('Delete student "' + student.name + '"?')) return;
-
-  students.splice(i, 1);
-  saveStudents();
-  renderAll();
-}
-
-function receiptHtml(s){
-  const bal = s.total - s.paid;
-  const hasPhoto = s.photo && s.photo.startsWith('data:');
-  const photoBox = hasPhoto
-    ? `<img src="${s.photo}" style="width:64px; height:64px; border-radius:8px; object-fit:cover; border:1px solid var(--border);">`
-    : `<div style="width:64px; height:64px; border-radius:8px; border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:var(--muted); text-align:center; padding:4px;">No Photo</div>`;
-  return `
-    <div class="receipt-head">
-      <div style="display:flex; gap:12px; align-items:center;">
-        ${photoBox}
-        <div>
-          <h3>ABC SCHOOL</h3>
-          <div style="font-size:0.8rem; color:var(--muted);">Fee Payment Receipt</div>
-        </div>
-      </div>
-      <div class="rmeta">
-        <div><strong>Receipt No:</strong> ${s.receiptNo}</div>
-        <div><strong>Payment Date:</strong> ${fmtDate(s.paidDate)}</div>
-        <div><strong>Academic Year:</strong> 2026–27</div>
-      </div>
-    </div>
-    <table class="receipt-table">
-      <tr><td>Student Name</td><td>${s.name}</td></tr>
-      <tr><td>Class & Section</td><td>${s.cls}</td></tr>
-      <tr><td>Roll No</td><td>${s.roll || "-"}</td></tr>
-      <tr><td>Father / Guardian</td><td>${s.guardian || "-"}</td></tr>
-      <tr><td>Contact Number</td><td>${s.contact || "-"}</td></tr>
-      <tr><td>Total Fee</td><td>${fmtMoney(s.total)}</td></tr>
-      <tr><td>Amount Paid</td><td>${fmtMoney(s.paid)}</td></tr>
-      <tr><td>Balance Due</td><td>${fmtMoney(bal)}</td></tr>
-      <tr><td>Payment Mode</td><td>${s.mode}</td></tr>
-      <tr><td>Transaction ID</td><td>${s.txn}</td></tr>
-      <tr><td>Paid By</td><td>${s.paidBy}</td></tr>
-      <tr><td>Paid To</td><td>${s.paidTo}</td></tr>
-      <tr><td>Entered By</td><td>${s.enteredBy}</td></tr>
-    </table>
-    <div class="receipt-sign">
-      <div>Parent / Guardian Signature</div>
-      <div>Accountant Signature</div>
-    </div>
-    <div style="text-align:center; margin-top:20px; font-size:0.72rem; color:var(--muted);">ABC SCHOOL · Fee Management Accountant Panel</div>
-  `;
-}
-
-let currentReceiptStudent = null;
-
-function viewReceipt(i){
-  currentReceiptStudent = students[i];
-  document.getElementById("receiptContent").innerHTML = receiptHtml(currentReceiptStudent);
-  document.getElementById("receiptModal").classList.add("active");
-}
-function closeReceiptModal(){ document.getElementById("receiptModal").classList.remove("active"); currentReceiptStudent = null; }
-
-function printReceiptFromModal(){
-  if(!currentReceiptStudent) return;
-  document.getElementById("printArea").innerHTML = `<div class="receipt">${receiptHtml(currentReceiptStudent)}</div>`;
-  window.print();
-}
-
-function printReceiptLast(){
-  if(students.length===0){ alert("No students yet — add a student first."); return; }
-  viewReceipt(students.length - 1);
-}
-
-function renderMonthLabel(){
-  const sel = document.getElementById("monthSelect");
-  document.getElementById("monthTitle").textContent = sel.value;
-}
-
-function printMonthlyPdf(){
-  const month = document.getElementById("monthSelect").value;
-  const monthShort = month.split(" ")[0].slice(0,3) + "-" + month.split(" ")[1].slice(2);
-  const filtered = students.filter(s => s.paidDate && fmtDate(s.paidDate).endsWith(monthShort));
-  const rows = filtered.length ? filtered.map(s=>`
-    <tr><td>${s.name}</td><td>${s.cls}</td><td>${fmtMoney(s.paid)}</td><td>${fmtDate(s.paidDate)}</td><td>${s.mode}</td></tr>
-  `).join("") : `<tr><td colspan="5" style="text-align:center; padding:20px;">No collections recorded for ${month}.</td></tr>`;
-  const totalForMonth = filtered.reduce((a,s)=>a+s.paid,0);
-
-  document.getElementById("printArea").innerHTML = `
-    <div class="receipt">
-      <div class="receipt-head">
-        <div><h3>ABC SCHOOL</h3><div style="font-size:0.8rem; color:var(--muted);">Monthly Fee Collection Report</div></div>
-        <div class="rmeta"><div><strong>Month:</strong> ${month}</div><div><strong>Academic Year:</strong> 2026–27</div></div>
-      </div>
-      <table class="receipt-table" style="width:100%;">
-        <tr style="font-weight:700; color:var(--navy);"><td>Student</td><td>Class</td><td>Amount Paid</td><td>Paid Date</td><td>Mode</td></tr>
-        ${rows}
-      </table>
-      <div style="margin-top:16px; font-weight:700; color:var(--navy);">Total Collected in ${month}: ${fmtMoney(totalForMonth)}</div>
-    </div>
-  `;
-  window.print();
-}
-
-
-
-
-
-// init month dropdown
-const monthSelect = document.getElementById("monthSelect");
-monthSelect.innerHTML = months.map(m=>`<option ${m==="June 2026"?"selected":""}>${m}</option>`).join("");
-renderMonthLabel();
-
-renderAll();
-</script>
-
-</body>
-</html>
+    <form id="addStudentForm" onsubmit="saveStudent(event)">
