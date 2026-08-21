@@ -151,19 +151,19 @@
       <option>2026–27</option>
       <option>2027–28</option>
     </select>
-    <select id="monthFilter">
-      <option value="01">January</option>
-      <option value="02">February</option>
-      <option value="03">March</option>
-      <option value="04" selected>April</option>
-      <option value="05">May</option>
-      <option value="06">June</option>
-      <option value="07">July</option>
-      <option value="08">August</option>
-      <option value="09">September</option>
-      <option value="10">October</option>
-      <option value="11">November</option>
-      <option value="12">December</option>
+    <select id="monthFilter" title="Month" onchange="renderTable()">
+      <option value="" disabled selected>Month</option>
+      <option value="2026-06">June 2026</option>
+      <option value="2026-07">July 2026</option>
+      <option value="2026-08">August 2026</option>
+      <option value="2026-09">September 2026</option>
+      <option value="2026-10">October 2026</option>
+      <option value="2026-11">November 2026</option>
+      <option value="2026-12">December 2026</option>
+      <option value="2027-01">January 2027</option>
+      <option value="2027-02">February 2027</option>
+      <option value="2027-03">March 2027</option>
+      <option value="2027-04">April 2027</option>
     </select>
     <button class="btn btn-header-print" onclick="printMonthlyReport()">📄 Print Monthly PDF</button>
   </div>
@@ -203,6 +203,8 @@
     </div>
     <div class="toolbar-right">
       <button class="btn btn-primary" onclick="openAddModal()">+ Add Student</button>
+      <button class="btn btn-navy" onclick="printSelectedReceipts()">🖨 Print Receipt</button>
+      <button class="btn" style="background:var(--bad); color:#fff; font-weight:700; border:none;" onclick="openBulkDeleteModal()">🗑 Delete</button>
     </div>
   </div>
 
@@ -210,6 +212,7 @@
     <table>
       <thead>
         <tr>
+          <th><input type="checkbox" id="selectAllBox" onchange="toggleSelectAll(this)"></th>
           <th>Photo</th>
           <th>Student Name</th>
           <th>Class & Section</th>
@@ -324,22 +327,40 @@
   </div>
 </div>
 
+<!-- BULK DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="bulkDeleteModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeModal('bulkDeleteModal')">✕</button>
+    <h2>Remove Selected Students?</h2>
+    <p style="color:var(--muted); font-size:0.9rem;" id="bulkDeleteModalText">This will permanently remove the selected fee records.</p>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="closeModal('bulkDeleteModal')">Cancel</button>
+      <button class="btn" style="background:var(--bad); color:#fff; font-weight:700; border:none;" onclick="confirmBulkDelete()">Remove</button>
+    </div>
+  </div>
+</div>
+
 <!-- PRINT AREA -->
 <div id="printArea"></div>
 
 <script>
   // ---------- Seed data ----------
   let students = [
-    { id: 1, name: "Ananya Reddy", cls: "1st Class", section: "A", roll: "101", total: 45000, paid: 45000, paidDate: "2026-04-05", dueDate: "2026-04-10", mode: "Online" },
-    { id: 2, name: "Rohan Verma", cls: "1st Class", section: "A", roll: "102", total: 45000, paid: 20000, paidDate: "2026-04-03", dueDate: "2026-04-10", mode: "Cash" },
-    { id: 3, name: "Sneha Iyer", cls: "2nd Class", section: "B", roll: "215", total: 48000, paid: 48000, paidDate: "2026-03-28", dueDate: "2026-04-10", mode: "UPI" },
-    { id: 4, name: "Karthik Rao", cls: "2nd Class", section: "B", roll: "217", total: 48000, paid: 0, paidDate: "", dueDate: "2026-03-15", mode: "Cheque" },
-    { id: 5, name: "Meera Nair", cls: "3rd Class", section: "C", roll: "308", total: 52000, paid: 30000, paidDate: "2026-04-01", dueDate: "2026-04-20", mode: "Online" },
-    { id: 6, name: "Aditya Kumar", cls: "3rd Class", section: "C", roll: "312", total: 52000, paid: 52000, paidDate: "2026-03-30", dueDate: "2026-04-05", mode: "Cash" },
+    { id: 1, name: "Ananya Reddy", cls: "1st Class", section: "A", roll: "101", total: 45000, paid: 45000, paidDate: "2026-06-05", dueDate: "2026-06-10", mode: "Online" },
+    { id: 2, name: "Rohan Verma", cls: "1st Class", section: "A", roll: "102", total: 45000, paid: 20000, paidDate: "2026-07-03", dueDate: "2026-07-10", mode: "Cash" },
+    { id: 3, name: "Sneha Iyer", cls: "2nd Class", section: "B", roll: "215", total: 48000, paid: 48000, paidDate: "2026-08-28", dueDate: "2026-08-10", mode: "UPI" },
+    { id: 4, name: "Karthik Rao", cls: "2nd Class", section: "B", roll: "217", total: 48000, paid: 0, paidDate: "", dueDate: "2026-09-15", mode: "Cheque" },
+    { id: 5, name: "Meera Nair", cls: "3rd Class", section: "C", roll: "308", total: 52000, paid: 30000, paidDate: "2026-10-01", dueDate: "2026-10-20", mode: "Online" },
+    { id: 6, name: "Aditya Kumar", cls: "4th Class", section: "A", roll: "312", total: 52000, paid: 52000, paidDate: "2026-11-05", dueDate: "2026-11-10", mode: "Cash" },
+    { id: 7, name: "Divya Sharma", cls: "5th Class", section: "B", roll: "406", total: 55000, paid: 25000, paidDate: "2026-12-04", dueDate: "2026-12-12", mode: "UPI" },
+    { id: 8, name: "Vikram Singh", cls: "6th Class", section: "A", roll: "501", total: 58000, paid: 58000, paidDate: "2027-01-06", dueDate: "2027-01-10", mode: "Online" },
+    { id: 9, name: "Priya Patel", cls: "7th Class", section: "C", roll: "612", total: 60000, paid: 0, paidDate: "", dueDate: "2027-02-15", mode: "Cheque" },
+    { id: 10, name: "Arjun Das", cls: "8th Class", section: "B", roll: "718", total: 62000, paid: 40000, paidDate: "2027-03-08", dueDate: "2027-03-18", mode: "Cash" },
   ];
-  let nextId = 7;
+  let nextId = 11;
   let dashboardFilter = null;   // { field: 'status', value: 'Overdue' } etc.
   let deleteTargetId = null;
+  let selectedIds = new Set();
 
   const todayStr = () => new Date().toISOString().slice(0, 10);
 
@@ -413,12 +434,14 @@
   function renderTable() {
     const classFilter = document.getElementById("classFilter").value;
     const statusFilter = document.getElementById("statusFilter").value;
+    const monthFilter = document.getElementById("monthFilter").value;
     const search = document.getElementById("searchInput").value.trim().toLowerCase();
 
     let rows = students.map(s => ({ ...s, status: computeStatus(s), balance: Math.max(0, s.total - s.paid) }));
 
     if (classFilter) rows = rows.filter(s => s.cls === classFilter);
     if (statusFilter) rows = rows.filter(s => s.status === statusFilter);
+    if (monthFilter) rows = rows.filter(s => (s.dueDate || "").startsWith(monthFilter) || (s.paidDate || "").startsWith(monthFilter));
     if (search) rows = rows.filter(s => s.name.toLowerCase().includes(search) || s.roll.toLowerCase().includes(search));
 
     if (dashboardFilter) {
@@ -436,15 +459,17 @@
 
     const tbody = document.getElementById("studentTableBody");
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="12">No students match the current filters.</td></tr>`;
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="13">No students match the current filters.</td></tr>`;
       return;
     }
 
     tbody.innerHTML = rows.map(s => {
       const initials = s.name.split(" ").map(p => p[0]).join("").slice(0, 2).toUpperCase();
       const badgeClass = s.status.toLowerCase();
+      const checked = selectedIds.has(s.id) ? "checked" : "";
       return `
         <tr>
+          <td><input type="checkbox" class="row-check" data-id="${s.id}" ${checked} onchange="toggleRowSelect(${s.id}, this.checked)"></td>
           <td><div class="avatar">${initials}</div></td>
           <td>${s.name}</td>
           <td>${s.cls} - ${s.section}</td>
@@ -533,6 +558,57 @@
     renderAll();
   }
 
+  // ---------- Selection ----------
+  function toggleRowSelect(id, checked) {
+    if (checked) selectedIds.add(id); else selectedIds.delete(id);
+    const allBox = document.getElementById("selectAllBox");
+    if (allBox) allBox.checked = selectedIds.size > 0 && document.querySelectorAll(".row-check").length === selectedIds.size;
+  }
+
+  function toggleSelectAll(box) {
+    const rowChecks = document.querySelectorAll(".row-check");
+    rowChecks.forEach(cb => {
+      cb.checked = box.checked;
+      const id = Number(cb.dataset.id);
+      if (box.checked) selectedIds.add(id); else selectedIds.delete(id);
+    });
+  }
+
+  function getSelectedStudents() {
+    return students.filter(s => selectedIds.has(s.id));
+  }
+
+  // ---------- Bulk delete ----------
+  function openBulkDeleteModal() {
+    const chosen = getSelectedStudents();
+    if (chosen.length === 0) {
+      alert("Select at least one student using the checkboxes first.");
+      return;
+    }
+    document.getElementById("bulkDeleteModalText").textContent =
+      `This will permanently remove ${chosen.length} student record(s): ${chosen.map(s => s.name).join(", ")}. This cannot be undone.`;
+    openModal("bulkDeleteModal");
+  }
+
+  function confirmBulkDelete() {
+    students = students.filter(s => !selectedIds.has(s.id));
+    selectedIds.clear();
+    closeModal("bulkDeleteModal");
+    renderAll();
+  }
+
+  // ---------- Bulk print receipts ----------
+  function printSelectedReceipts() {
+    const chosen = getSelectedStudents();
+    if (chosen.length === 0) {
+      alert("Select at least one student using the checkboxes first.");
+      return;
+    }
+    const combined = chosen.map(s => `<div class="print-report" style="page-break-after:always;">${buildReceiptHTML(s)}</div>`).join("");
+    document.getElementById("printArea").innerHTML = combined;
+    window.print();
+  }
+
   // ---------- Delete ----------
   function openDeleteModal(id) {
     deleteTargetId = id;
@@ -544,6 +620,7 @@
 
   function confirmDelete() {
     students = students.filter(s => s.id !== deleteTargetId);
+    selectedIds.delete(deleteTargetId);
     deleteTargetId = null;
     closeModal("deleteModal");
     renderAll();
@@ -609,9 +686,11 @@
   function printMonthlyReport() {
     const classFilter = document.getElementById("classFilter").value;
     const statusFilter = document.getElementById("statusFilter").value;
+    const monthFilter = document.getElementById("monthFilter").value;
     let rows = students.map(s => ({ ...s, status: computeStatus(s), balance: Math.max(0, s.total - s.paid) }));
     if (classFilter) rows = rows.filter(s => s.cls === classFilter);
     if (statusFilter) rows = rows.filter(s => s.status === statusFilter);
+    if (monthFilter) rows = rows.filter(s => (s.dueDate || "").startsWith(monthFilter) || (s.paidDate || "").startsWith(monthFilter));
     if (dashboardFilter) {
       if (dashboardFilter.field === "status") rows = rows.filter(s => s.status === dashboardFilter.value);
       if (dashboardFilter.field === "hasBalance") rows = rows.filter(s => s.balance > 0);
