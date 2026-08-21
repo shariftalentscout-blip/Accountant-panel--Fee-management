@@ -31,6 +31,8 @@
   header .sub{font-size:0.78rem; color:rgba(255,255,255,0.65); font-family:'JetBrains Mono',monospace;}
   header select{background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.25); padding:9px 14px; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.85rem;}
   header select option{color:#1C2333;}
+  .header-controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .btn-header-print{background:var(--gold); color:var(--navy); font-weight:700; border:none; padding:9px 16px; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.85rem; cursor:pointer; white-space:nowrap;}
 
   .wrap{max-width:1280px; margin:0 auto; padding:26px 24px 60px;}
 
@@ -144,10 +146,27 @@
       <div class="sub">ACCOUNTANT PANEL</div>
     </div>
   </div>
-  <select id="academicYear" onchange="renderAll()">
-    <option>2026–27</option>
-    <option>2027–28</option>
-  </select>
+  <div class="header-controls">
+    <select id="academicYear" onchange="renderAll()">
+      <option>2026–27</option>
+      <option>2027–28</option>
+    </select>
+    <select id="monthFilter">
+      <option value="01">January</option>
+      <option value="02">February</option>
+      <option value="03">March</option>
+      <option value="04" selected>April</option>
+      <option value="05">May</option>
+      <option value="06">June</option>
+      <option value="07">July</option>
+      <option value="08">August</option>
+      <option value="09">September</option>
+      <option value="10">October</option>
+      <option value="11">November</option>
+      <option value="12">December</option>
+    </select>
+    <button class="btn btn-header-print" onclick="printMonthlyReport()">📄 Print Monthly PDF</button>
+  </div>
 </header>
 
 <div class="wrap">
@@ -167,6 +186,13 @@
         <option value="1st Class">1st Class</option>
         <option value="2nd Class">2nd Class</option>
         <option value="3rd Class">3rd Class</option>
+        <option value="4th Class">4th Class</option>
+        <option value="5th Class">5th Class</option>
+        <option value="6th Class">6th Class</option>
+        <option value="7th Class">7th Class</option>
+        <option value="8th Class">8th Class</option>
+        <option value="9th Class">9th Class</option>
+        <option value="10th Class">10th Class</option>
       </select>
       <select id="statusFilter" onchange="renderTable()">
         <option value="">All Statuses</option>
@@ -176,7 +202,6 @@
       </select>
     </div>
     <div class="toolbar-right">
-      <button class="btn btn-navy" onclick="printMonthlyReport()">📄 Print Monthly PDF</button>
       <button class="btn btn-primary" onclick="openAddModal()">+ Add Student</button>
     </div>
   </div>
@@ -222,6 +247,13 @@
             <option value="1st Class">1st Class</option>
             <option value="2nd Class">2nd Class</option>
             <option value="3rd Class">3rd Class</option>
+            <option value="4th Class">4th Class</option>
+            <option value="5th Class">5th Class</option>
+            <option value="6th Class">6th Class</option>
+            <option value="7th Class">7th Class</option>
+            <option value="8th Class">8th Class</option>
+            <option value="9th Class">9th Class</option>
+            <option value="10th Class">10th Class</option>
           </select>
         </div>
         <div class="form-field">
@@ -428,6 +460,7 @@
             <div class="action-cell">
               <button class="link-btn" onclick="openEditModal(${s.id})">Edit</button>
               <button class="link-btn" onclick="openReceipt(${s.id})">Receipt</button>
+              <button class="link-btn" onclick="printReceiptNow(${s.id})">🖨 Print</button>
               <button class="delete-btn" onclick="openDeleteModal(${s.id})">Delete</button>
             </div>
           </td>
@@ -517,13 +550,11 @@
   }
 
   // ---------- Receipt ----------
-  function openReceipt(id) {
-    const s = students.find(x => x.id === id);
-    if (!s) return;
+  function buildReceiptHTML(s) {
     const balance = Math.max(0, s.total - s.paid);
     const status = computeStatus(s);
     const receiptNo = "RCPT-" + String(s.id).padStart(4, "0");
-    document.getElementById("receiptContent").innerHTML = `
+    return `
       <div class="receipt-head">
         <div>
           <h3>ABC School</h3>
@@ -551,12 +582,26 @@
         <div>Accountant Signature</div>
       </div>
     `;
+  }
+
+  function openReceipt(id) {
+    const s = students.find(x => x.id === id);
+    if (!s) return;
+    document.getElementById("receiptContent").innerHTML = buildReceiptHTML(s);
     openModal("receiptModal");
   }
 
   function printReceipt() {
     const content = document.getElementById("receiptContent").innerHTML;
     document.getElementById("printArea").innerHTML = `<div class="print-report">${content}</div>`;
+    window.print();
+  }
+
+  // Print a student's receipt immediately, no modal preview step
+  function printReceiptNow(id) {
+    const s = students.find(x => x.id === id);
+    if (!s) return;
+    document.getElementById("printArea").innerHTML = `<div class="print-report">${buildReceiptHTML(s)}</div>`;
     window.print();
   }
 
@@ -573,6 +618,8 @@
     }
 
     const year = document.getElementById("academicYear").value;
+    const monthSelect = document.getElementById("monthFilter");
+    const monthName = monthSelect.options[monthSelect.selectedIndex].text;
     const totalCollected = rows.reduce((sum, s) => sum + s.paid, 0);
     const totalDue = rows.reduce((sum, s) => sum + s.balance, 0);
 
@@ -591,7 +638,7 @@
     document.getElementById("printArea").innerHTML = `
       <div class="print-report">
         <h2>ABC School — Monthly Fee Report</h2>
-        <div class="pmeta">Academic Year: ${year} &nbsp;|&nbsp; Generated: ${fmtDate(todayStr())} &nbsp;|&nbsp;
+        <div class="pmeta">Month: ${monthName} &nbsp;|&nbsp; Academic Year: ${year} &nbsp;|&nbsp; Generated: ${fmtDate(todayStr())} &nbsp;|&nbsp;
         Total Collected: ${fmtMoney(totalCollected)} &nbsp;|&nbsp; Total Due: ${fmtMoney(totalDue)}</div>
         <table>
           <thead>
