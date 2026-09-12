@@ -6,6 +6,7 @@
 <title>ABC School — Fee Management Accountant Panel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
     --navy:#0F1B3D;
@@ -126,6 +127,22 @@
   .receipt-sign{display:flex; justify-content:space-between; margin-top:40px; font-size:0.8rem; color:var(--muted);}
   .receipt-sign div{border-top:1px solid var(--muted); padding-top:6px; width:40%; text-align:center;}
 
+  /* BULK IMPORT */
+  .dropzone{
+    border:2px dashed var(--border); border-radius:12px; padding:28px 18px; text-align:center;
+    background:var(--bg); cursor:pointer; transition:border-color .12s ease, background .12s ease;
+  }
+  .dropzone:hover, .dropzone.dragover{border-color:var(--gold); background:#FCF8EC;}
+  .dropzone .dz-icon{font-size:1.8rem; margin-bottom:8px;}
+  .dropzone .dz-title{font-weight:700; color:var(--navy); font-size:0.92rem;}
+  .dropzone .dz-sub{font-size:0.76rem; color:var(--muted); margin-top:4px;}
+  .template-link{font-size:0.78rem; color:var(--navy); font-weight:700; text-decoration:underline; cursor:pointer; background:none; border:none; padding:0;}
+  .import-summary{margin-top:16px; border:1px solid var(--border); border-radius:10px; padding:14px 16px; font-size:0.84rem; max-height:220px; overflow-y:auto;}
+  .import-summary .ok-line{color:var(--good);}
+  .import-summary .err-line{color:var(--bad);}
+  .col-help{margin-top:14px; font-size:0.74rem; color:var(--muted); background:var(--bg); border-radius:8px; padding:10px 12px;}
+  .col-help code{background:var(--card); border:1px solid var(--border); padding:1px 5px; border-radius:4px; font-family:'JetBrains Mono',monospace;}
+
   #printArea{display:none;}
   .print-report h2{color:var(--navy); margin-bottom:4px;}
   .print-report .pmeta{font-size:0.8rem; color:var(--muted); margin-bottom:16px;}
@@ -214,6 +231,7 @@
     </div>
     <div class="toolbar-right">
       <button class="btn btn-primary" onclick="openAddModal()">+ Add Student</button>
+      <button class="btn btn-ghost" onclick="openBulkImportModal()">📥 Bulk Import</button>
       <button class="btn btn-navy" onclick="printSelectedReceipts()">🖨 Print Receipt</button>
       <button class="btn" style="background:var(--bad); color:#fff; font-weight:700; border:none;" onclick="openBulkDeleteModal()">🗑 Delete</button>
     </div>
@@ -310,6 +328,38 @@
         <button type="submit" class="btn btn-primary">Save Student</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- BULK IMPORT MODAL -->
+<div class="modal-overlay" id="bulkImportModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('bulkImportModal')">✕</button>
+    <h2>Bulk Import Students</h2>
+    <p style="font-size:0.84rem; color:var(--muted); margin-bottom:14px;">
+      Upload an Excel (.xlsx) or CSV file to add many students at once — no limit, works for 500+ rows.
+      <button type="button" class="template-link" onclick="downloadTemplate()">Download sample template</button>
+    </p>
+
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('bulkImportInput').click()">
+      <div class="dz-icon">📄</div>
+      <div class="dz-title">Click to choose a file, or drag &amp; drop it here</div>
+      <div class="dz-sub">.xlsx, .xls or .csv</div>
+    </div>
+    <input type="file" id="bulkImportInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleBulkImportFile(this.files[0])">
+
+    <div class="col-help">
+      Expected columns (any order, header names are flexible):
+      <code>Name</code>, <code>Class</code>, <code>Section</code>, <code>Roll No</code>,
+      <code>Total Fee</code>, <code>Amount Paid</code>, <code>Paid Date</code>, <code>Due Date</code>, <code>Payment Mode</code>.
+      Dates should be like <code>2026-09-15</code>. Rows missing Name, Class or Roll No are skipped.
+    </div>
+
+    <div class="import-summary" id="importSummary" style="display:none;"></div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('bulkImportModal')">Close</button>
+    </div>
   </div>
 </div>
 
@@ -739,6 +789,172 @@
         </table>
       </div>`;
     window.print();
+  }
+
+  // ---------- BULK IMPORT ----------
+  function openBulkImportModal() {
+    document.getElementById("importSummary").style.display = "none";
+    document.getElementById("importSummary").innerHTML = "";
+    document.getElementById("bulkImportInput").value = "";
+    openModal("bulkImportModal");
+  }
+
+  // Drag & drop support on the dropzone
+  document.addEventListener("DOMContentLoaded", () => {
+    const dz = document.getElementById("dropzone");
+    if (!dz) return;
+    ["dragenter", "dragover"].forEach(evt =>
+      dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.add("dragover"); })
+    );
+    ["dragleave", "drop"].forEach(evt =>
+      dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.remove("dragover"); })
+    );
+    dz.addEventListener("drop", e => {
+      const file = e.dataTransfer.files[0];
+      if (file) handleBulkImportFile(file);
+    });
+  });
+
+  // Normalize a header cell into one of our known field keys
+  function normalizeHeader(h) {
+    const key = String(h || "").toLowerCase().replace(/[^a-z]/g, "");
+    if (["name", "studentname"].includes(key)) return "name";
+    if (["class", "classname"].includes(key)) return "cls";
+    if (["section"].includes(key)) return "section";
+    if (["rollno", "roll", "rollnumber"].includes(key)) return "roll";
+    if (["totalfee", "totalfees", "fee", "total"].includes(key)) return "total";
+    if (["amountpaid", "paid", "paidamount"].includes(key)) return "paid";
+    if (["paiddate", "datepaid"].includes(key)) return "paidDate";
+    if (["duedate", "date"].includes(key)) return "dueDate";
+    if (["paymentmode", "mode", "paymentmethod"].includes(key)) return "mode";
+    return null;
+  }
+
+  // Convert an Excel serial date or various date strings to YYYY-MM-DD
+  function normalizeDate(val) {
+    if (val === undefined || val === null || val === "") return "";
+    if (typeof val === "number") {
+      const parsed = XLSX.SSF.parse_date_code(val);
+      if (parsed) {
+        const mm = String(parsed.m).padStart(2, "0");
+        const dd = String(parsed.d).padStart(2, "0");
+        return `${parsed.y}-${mm}-${dd}`;
+      }
+    }
+    const str = String(val).trim();
+    const isoMatch = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (isoMatch) return `${isoMatch[1]}-${isoMatch[2].padStart(2, "0")}-${isoMatch[3].padStart(2, "0")}`;
+    const dmy = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+    if (dmy) return `${dmy[3]}-${dmy[2].padStart(2, "0")}-${dmy[1].padStart(2, "0")}`;
+    const d = new Date(str);
+    if (!isNaN(d)) return d.toISOString().slice(0, 10);
+    return "";
+  }
+
+  function normalizeClassValue(val) {
+    if (!val) return "";
+    const str = String(val).trim();
+    if (/class/i.test(str)) return str;
+    const num = str.match(/\d+/);
+    if (num) {
+      const n = Number(num[0]);
+      const suffix = (n === 1) ? "st" : (n === 2) ? "nd" : (n === 3) ? "rd" : "th";
+      return `${n}${suffix} Class`;
+    }
+    return str;
+  }
+
+  function handleBulkImportFile(file) {
+    if (!file) return;
+    const summaryBox = document.getElementById("importSummary");
+    summaryBox.style.display = "block";
+    summaryBox.innerHTML = "Reading file…";
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array", cellDates: false });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true, defval: "" });
+
+        if (rows.length < 2) {
+          summaryBox.innerHTML = `<div class="err-line">File has no data rows.</div>`;
+          return;
+        }
+
+        const headerRow = rows[0];
+        const fieldMap = headerRow.map(h => normalizeHeader(h));
+
+        let added = 0;
+        const errors = [];
+
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i];
+          if (!row || row.every(c => c === "" || c === undefined || c === null)) continue;
+
+          const rec = {};
+          fieldMap.forEach((field, colIdx) => {
+            if (field) rec[field] = row[colIdx];
+          });
+
+          const name = String(rec.name || "").trim();
+          const cls = normalizeClassValue(rec.cls);
+          const roll = String(rec.roll || "").trim();
+
+          if (!name || !cls || !roll) {
+            errors.push(`Row ${i + 1}: missing Name, Class or Roll No — skipped.`);
+            continue;
+          }
+
+          const total = Number(rec.total) || 0;
+          let paid = Number(rec.paid) || 0;
+          if (paid > total) paid = total;
+
+          students.push({
+            id: nextId++,
+            name: name,
+            cls: cls,
+            section: String(rec.section || "").trim().toUpperCase() || "A",
+            roll: roll,
+            total: total,
+            paid: paid,
+            paidDate: normalizeDate(rec.paidDate),
+            dueDate: normalizeDate(rec.dueDate),
+            mode: ["Cash", "Online", "Cheque", "UPI"].includes(String(rec.mode).trim())
+              ? String(rec.mode).trim()
+              : "Cash",
+          });
+          added++;
+        }
+
+        renderAll();
+
+        let html = `<div class="ok-line"><strong>${added}</strong> student(s) imported successfully.</div>`;
+        if (errors.length) {
+          html += `<div style="margin-top:8px;">${errors.length} row(s) skipped:</div>`;
+          html += errors.slice(0, 30).map(e => `<div class="err-line">• ${e}</div>`).join("");
+          if (errors.length > 30) html += `<div class="err-line">…and ${errors.length - 30} more.</div>`;
+        }
+        summaryBox.innerHTML = html;
+      } catch (err) {
+        summaryBox.innerHTML = `<div class="err-line">Could not read this file. Please make sure it's a valid .xlsx or .csv file.</div>`;
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function downloadTemplate() {
+    const headers = ["Name", "Class", "Section", "Roll No", "Total Fee", "Amount Paid", "Paid Date", "Due Date", "Payment Mode"];
+    const sample = [
+      ["Ravi Kumar", "1st Class", "A", "101", 45000, 45000, "2026-06-05", "2026-06-10", "Online"],
+      ["Lakshmi Devi", "2nd Class", "B", "215", 48000, 20000, "", "2026-09-15", "Cash"],
+    ];
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...sample]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Students");
+    XLSX.writeFile(wb, "student_import_template.xlsx");
   }
 
   renderAll();
